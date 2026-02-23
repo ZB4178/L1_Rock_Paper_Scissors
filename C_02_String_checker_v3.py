@@ -1,6 +1,6 @@
 # Check that users have entered a valid
 # option based on a list
-def string_checker(question, valid_ans=["yes", "no"]):
+def string_checker(question, valid_ans=("yes", "no")):
 
     error = f"Please enter a valid option from the following list: {valid_ans}"
 
@@ -33,5 +33,5 @@ want_instructions = string_checker("do you want instructions? ")
 
 print("you chose: ", want_instructions)
 
-user_choice = string_checker("choose", rps_list)
+user_choice = string_checker("Choose: ", rps_list)
 print("you chose: ", user_choice)
