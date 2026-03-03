@@ -1,3 +1,4 @@
+import random
 # Check that users have entered a valid
 # option based on a list
 def string_checker(question, valid_ans=("yes", "no")):
@@ -71,15 +72,40 @@ def int_check(question):
             print(error)
 
 
+# Compares user / computer choice and returns
+# result (win/lose/tie)
+def rps_compare(user, comp):
+
+    # If the user and computer choice is the same, it's a tie
+    if user == comp:
+        round_result = "tie"
+
+    # There are three ways to win
+    elif user == "paper" and comp == "rock":
+        round_result = "win"
+    elif user == "rock" and comp == "scissors":
+        round_result = "win"
+    elif user == "scissors" and comp == "paper":
+        round_result = "win"
+
+    # If it's not a win / tie, then it's a loss
+    else:
+        round_result = "lose"
+
+    return round_result
+
+
 # Main Routine Starts Here
 
 # Initialize game values
 mode = "regular"
-rounds_played = 0
 
+rounds_played = 0
+rounds_tied = 0
+rounds_lost = 0
 
 rps_list = ["rock", "paper", "scissors", "xxx"]
-
+game_history = []
 
 print("💎📄✂️  Rock / Paper / Scissors Game ✂️📄️💎")
 print()
@@ -108,13 +134,40 @@ while rounds_played < num_rounds:
         rounds_heading = f"\n💿💿💿 Round {rounds_played + 1} of {num_rounds} 💿💿💿"
 
     print(rounds_heading)
-    print()
 
+    # Randomly choose from the rps list (excluding the exit code)
+    comp_choice = random.choice(rps_list[:-1])
+    print("Computer chose", comp_choice)
+
+    # Get user choice
     user_choice = string_checker("Choose: ", rps_list)
     print("You chose",user_choice)
 
+    # If user choice = exit code, break the loop
     if user_choice == "xxx":
         break
+
+    result = rps_compare(user_choice, comp_choice)
+
+    # Adjust game lost / game tied counters and add results to game history
+    if result == "tie":
+        rounds_tied += 1
+        feedback = "👔👔 It's a Tie? 👔👔"
+    elif result == "lose":
+        rounds_lost += 1
+        feedback = "😢😢 You lose... 😢😢"
+    else:
+        feedback = "👍👍 You win!! 👍👍"
+
+
+    #set up round feedback and output it to user
+    # Add it to the game history list (Include the round number)
+    round_feedback = f"{user_choice} vs {comp_choice}, {feedback}"
+    history_item = f"Round: {rounds_played + 1} - {round_feedback}"
+
+    print(feedback)
+    game_history.append(history_item)
+
 
     rounds_played += 1
 
@@ -122,7 +175,30 @@ while rounds_played < num_rounds:
     if mode == "infinite":
         num_rounds += 1
 
+    # Game loop ends here
 
-# Game loop ends here
+    # Game history / Statistics area
+if rounds_played > 0:
+    # Calculate statistics
+    rounds_won = rounds_played - rounds_tied - rounds_lost
+    percent_won = rounds_won / rounds_played * 100
+    percent_lost = rounds_lost / rounds_played * 100
+    percent_tied = 100 - percent_won - percent_lost
 
-# Game history / Statistics area
+    # Output game statistics
+    print("📊📊📊 Game Statistics 📊📊📊")
+    print(f"👍 Won: {percent_won:.2f} \t"
+          f"😢 Lost: {percent_lost:.2f} \t"
+          f"👔 Tied: {percent_tied:.2f}")
+
+    # Ask user if they want to see their game history
+    see_history = string_checker("\n🪶🪶🪶 Would you like to see the game history? 🪶🪶🪶 ")
+    if see_history == "yes":
+        for item in game_history:
+            print(item)
+
+    print()
+    print("💎📄✂️ Thanks for playing! ✂️📄💎")
+
+else:
+    print("🐔🐔🐔 Chickening out already? Yikes... 🐔🐔🐔")
